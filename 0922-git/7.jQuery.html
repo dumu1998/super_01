@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./bootstrap.min.css">
+</head>
+
+<body>
+    <input type="file" id="file1">
+    <button id="btn">上传文件</button><br>
+    <img src="../loading.gif" style="display:none ;" id="loading">
+    <img id="img" />
+
+    <div class="progress" style="width:300px; margin: 15px 10px;">
+        <div class="progress-bar" progress-bar-striped active style="width: 0%;">
+            0%
+        </div>
+    </div>
+
+</body>
+<script src="../jquery.js"></script>
+<script>
+    // $(function () {
+    //     // 实现loading效果
+    //     // $(document).ajaxStart()会监听所有ajax请求
+    //     $(document).ajaxStart(function () {
+    //         $('#loading').show()
+    //     })
+    //     $(document).ajaxStop(function () {
+    //         $('#loading').hide()
+    //     })
+    //     // 文件上传
+    //     const url = 'http://www.liulongbin.top:3006/api/upload/avatar'
+    //     $('#btn').on('click', function () {
+    //         const files = $('#file1')[0].files
+    //         if (!files.length) alert('请先选择文件')
+
+    //         const fd = new FormData()
+    //         fd.append('avatar', files[0])
+    //         $.ajax({
+    //             method: 'post',
+    //             url,
+    //             data: fd,
+    //             processData: false, //必须为false  不对数据进行url编码，而是将数据原样发送至服务器
+    //             contentType: false, //必须为false
+    //             success(res) {
+    //                 console.log(res)
+    //             }
+    //         })
+    //     })
+    // })
+    $(document).ajaxStart(function () {
+        $('#loading').show()
+    })
+
+    $(document).ajaxStop(function () {
+        $('#loading').hide()
+    })
+
+    $(function () {
+        $('#btn').on('click', function () {
+            const files = $('#file1')[0].files
+            if (!files.length) return alert('请选择文件')
+
+            let formData = new FormData()
+            formData.append('avatar', files[0])
+            $.ajax({
+                method: 'post',
+                url: 'http://www.liulongbin.top:3006/api/upload/avatar',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success(res) {
+                    if (res.status === 200) {
+                        img.src = 'http://www.liulongbin.top:3006' + res.url
+                    }
+                }
+            })
+        })
+    })
+</script>
+
+</html>

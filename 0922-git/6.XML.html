@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./bootstrap.min.css">
+</head>
+
+<body>
+    <!-- 定义UI结构 -->
+    <input type="file" id="file1">
+    <button id="btn">上传文件</button><br>
+    <img id="img" style="width:300px;height: 300px;" />
+
+    <div class="progress" style="width:300px; margin: 15px 10px;">
+        <div class="progress-bar progress-bar-striped active" style="width: 0%;">
+            0%
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script src="../jquery.js"></script>
+<script>
+    // 旧版缺点：
+    // 只支持文本数据的传输，无法用来读取和上传文件
+    // 传送和接受数据时不显示进度，只提示有没有完成
+
+    // 新功能：
+    // 1.可设置请求时限
+    // 2.可使用FormData对象管理表单数据
+    // 3.可上传文件
+    // 4.可获取数据传输进度信息
+
+    // 1.设置请求时限
+    // xhr.timeout = 3000  最大等待为3000毫秒，超时自动停止请求
+    // xhr.ontimeout = function(){}  超时回调函数提醒用户超时
+
+    // 2.FormData对象管理表单数据,提交表单数据
+
+    // 请求头默认为: Content - Type: mulitipart / form - data
+    // let fd = new FormData()
+    // fd.append('username', 'zs')
+    // fd.append('upwd', '123456')
+    // let xhr = new XMLHttpRequest()
+    // xhr.open('post', 'http://www.liulongbin.top:3006/api/formdata')
+    // xhr.send(fd)
+    // xhr.onreadystatechange = function () {
+    //     if (xhr.readyState === 4 && xhr.status === 200) {
+    //         console.log(JSON.parse(xhr.responseText))
+    //     }
+    // }
+
+    // 利用FormData获取网页表单的值
+    // 可结合form快速获取所有参数
+    // const form = document.querySelector('#form')
+    // form.addEventListener('submit', function (e) {
+    //     e.preventDefault()
+    //     let fd = new FormData(form)
+    //     xhr.open('post', 'http://www.liulongbin.top:3006/api/formdata')
+    //     // 有默认请求头
+    //     xhr.send(fd)
+    //     xhr.onreadystatechange = function () {
+    //         if (xhr.readyState === 4 && xhr.status === 200) {
+    //             console.log(JSON.parse(xhr.responseText))
+    //         }
+    //     }
+    // })
+
+    // 快速获取表单数据 $('#form').serialize()与new FormData（表单）
+
+    // 上传文件
+    // 1.定义UI结构
+    // 2.验证是否选择了文件
+    // 3.向FormData中追加文件
+    // 4.使用xhr发起上传文件请求
+    // 5.监听onreadystatechange事件
+
+    // 2.验证是否选择了文件
+    btn.addEventListener('click', function () {
+        const files = document.querySelector('#file1').files
+        if (!files.length) alert('请选择文件')
+        // console.log(files)
+        // 获取选择的文件
+        const currentSelectedFiles = files[0]
+        // 3.追加文件
+        let fd = new FormData()
+        fd.append('avatar', currentSelectedFiles)
+        let xhr = new XMLHttpRequest()
+
+
+        // 显示文件上传进度
+        // 监听事件
+        // lengthComputable返回值为布尔值，表示当前上传资源是否具有可计算长度
+        // loaded  表示已传输字节
+        // total   表示需传输字节
+        xhr.upload.onprogress = function (e) {
+            if (e.lengthComputable) {
+                // Math.ceil() 函数返回大于或等于一个给定数字的最小整数。（向上取整）
+                let percentComplete = Math.ceil((e.loaded / e.total) * 100)
+                console.log(percentComplete)
+                $('.progress-bar').attr('style', 'width:' + percentComplete + '%').html(percentComplete + '%')
+            }
+        }
+        // 监听上传完成事件
+        xhr.upload.onload = function () {
+            $('.progress-bar').removeClass().addClass('progress-bar progress-bar-success')
+        }
+
+
+        // 4.发起上传请求
+        xhr.open('post', 'http://www.liulongbin.top:3006/api/upload/avatar')
+        xhr.send(fd)
+        // 5.监听事件
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                const result = JSON.parse(xhr.responseText)
+                if (result.status === 200) {
+                    img.src = 'http://www.liulongbin.top:3006' + result.url
+                } else { alert('失败' + result.message) }
+            }
+        }
+
+    })
+
+
+</script>
