@@ -39,6 +39,7 @@
     // 1.https ： 0配置，但每次访问都需要账号密码
     // 2.ssh ：需要额外配置，成功后不需要重复输入账号密码
 
+    // 1.https方式
     // git remote add origin https://github.com/dumu1998/super_01.git 
     // 将本地仓库与远程仓库进行关联，并把远程仓库命名为origin
 
@@ -54,5 +55,10 @@
     // 快速使用vscode打开文件
     // code .
 
+    // 2.SSH key方式
+    // 有两部分组成: 1.id_rsa(私钥文件，存放至客户端电脑) 2.id_ras.pub(公钥文件，需配置到Github中)
+    // ssh-keygen -t ed25519 -C"邮箱名" 敲击3次回车
 
+    // 终端Terminal
+    // ssh -T git@gitee.com
 </script>
